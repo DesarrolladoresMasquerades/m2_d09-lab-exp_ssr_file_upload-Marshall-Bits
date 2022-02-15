@@ -122,4 +122,16 @@ router.get("/user-profile", isLoggedIn, (req, res) => {
   res.render("users/user-profile");
 });
 
+////////////////////////////////////////////////////////////////////////
+///////////////////////////// POSTS ////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+router.get("/post-form", (req,res)=>{
+  res.render("post-form")
+})
+
+router.post("/post-form", fileUploader.single('profile-image'), (req, res, next) => {
+
+})
+
 module.exports = router;
