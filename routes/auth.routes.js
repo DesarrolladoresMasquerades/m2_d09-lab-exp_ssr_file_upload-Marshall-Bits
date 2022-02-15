@@ -36,7 +36,7 @@ router.post("/signup", isLoggedOut, (req, res, next) => {
   if (!regex.test(password)) {
     res.status(500).render("auth/signup", {
       errorMessage:
-        "Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter."
+        "Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter. Sorry this is just in order to improve your headache"
     });
     return;
   }
@@ -95,7 +95,8 @@ router.post("/login", isLoggedOut, (req, res, next) => {
         res.render("auth/login", { errorMessage: "Email is not registered. Try with other email." });
         return;
       } else if (bcryptjs.compareSync(password, user.passwordHash)) {
-        req.session.user = user;
+        console.log("Should be redirecting");
+        req.session.currentUser = user;
         res.redirect("/user-profile");
       } else {
         res.render("auth/login", { errorMessage: "Incorrect password." });
