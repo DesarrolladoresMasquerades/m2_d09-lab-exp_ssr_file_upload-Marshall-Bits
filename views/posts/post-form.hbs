@@ -1,0 +1,23 @@
+<div id="form">
+  <h2>Create a new post</h2>
+  <form action="/signup" method="POST" enctype="multipart/form-data">
+
+    <label> Content
+      <input type="text" name="content" placeholder="Text" />
+    </label>
+
+    <label> Name
+      <input type="email" name="picture-name" placeholder="Nice-picture-01" />
+    </label>
+
+    <input type="file" name="post-image" />
+
+    <button type="submit">Create post</button>
+
+    {{!-- error message will be added here --}}
+
+    {{#if errorMessage}}
+    <p class="error">{{errorMessage}}</p>
+    {{/if}}
+  </form>
+</div>

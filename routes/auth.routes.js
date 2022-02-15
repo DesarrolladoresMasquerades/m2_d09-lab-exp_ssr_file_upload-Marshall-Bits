@@ -10,6 +10,9 @@ const saltRounds = 10;
 // Require the User model in order to interact with the database
 const User = require("../models/User.model");
 
+//Require claudinary 
+const fileUploader = require('../config/cloudinary.config');
+
 // require (import) middleware functions
 const { isLoggedIn, isLoggedOut } = require("../middleware/route-guard.js");
 
@@ -21,9 +24,9 @@ const { isLoggedIn, isLoggedOut } = require("../middleware/route-guard.js");
 router.get("/signup", isLoggedOut, (req, res) => res.render("auth/signup"));
 
 // .post() route ==> to process form data
-router.post("/signup", isLoggedOut, (req, res, next) => {
+router.post("/signup", isLoggedOut, fileUploader.single('profile-image'), (req, res, next) => {
   const { username, email, password } = req.body;
-
+  console.log(req.file.path);
   if (!username || !email || !password) {
     res.render("auth/signup", {
       errorMessage: "All fields are mandatory. Please provide your username, email and password."
@@ -36,7 +39,7 @@ router.post("/signup", isLoggedOut, (req, res, next) => {
   if (!regex.test(password)) {
     res.status(500).render("auth/signup", {
       errorMessage:
-        "Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter."
+        "Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter. Sorry this is just in order to improve your headache"
     });
     return;
   }
@@ -51,7 +54,8 @@ router.post("/signup", isLoggedOut, (req, res, next) => {
         // passwordHash => this is the key from the User model
         //     ^
         //     |            |--> this is placeholder (how we named returning value from the previous method (.hash()))
-        passwordHash: hashedPassword
+        passwordHash: hashedPassword,
+        imgUrl: req.file.path
       });
     })
     .then((userFromDB) => {
@@ -95,7 +99,8 @@ router.post("/login", isLoggedOut, (req, res, next) => {
         res.render("auth/login", { errorMessage: "Email is not registered. Try with other email." });
         return;
       } else if (bcryptjs.compareSync(password, user.passwordHash)) {
-        req.session.user = user;
+        console.log("Should be redirecting");
+        req.session.currentUser = user;
         res.redirect("/user-profile");
       } else {
         res.render("auth/login", { errorMessage: "Incorrect password." });
@@ -116,5 +121,17 @@ router.post("/logout", isLoggedIn, (req, res) => {
 router.get("/user-profile", isLoggedIn, (req, res) => {
   res.render("users/user-profile");
 });
+
+////////////////////////////////////////////////////////////////////////
+///////////////////////////// POSTS ////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+router.get("/post-form", (req,res)=>{
+  res.render("post-form")
+})
+
+router.post("/post-form", fileUploader.single('profile-image'), (req, res, next) => {
+
+})
 
 module.exports = router;
